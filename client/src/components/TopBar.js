@@ -64,6 +64,8 @@ class TopBar extends Component {
                         onFailure={this.responseGoogle}
                         scope="openid email"
                         responseType="code"
+                        ux_mode='redirect'
+                        redirectUri=''
                     />
                 );
             case undefined:
@@ -76,6 +78,8 @@ class TopBar extends Component {
                         onFailure={this.responseGoogle}
                         scope="openid email"
                         responseType="code"
+                        ux_mode='redirect'
+                        redirectUri=''
                     />
                 );
             default:
