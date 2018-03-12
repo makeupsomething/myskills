@@ -14,7 +14,6 @@ class TopBar extends Component {
         this.responseGoogle = this.responseGoogle.bind(this);
         this.getCurrentUser = this.getCurrentUser.bind(this);
         this.logout = this.logout.bind(this);
-        this.signInCallback = this.signInCallback.bind(this);
     }
 
     componentDidMount() {
