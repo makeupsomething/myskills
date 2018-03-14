@@ -5,35 +5,28 @@ import { GoogleLogout } from 'react-google-login';
 import axios from 'axios';
 
 class TopBar extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          user: null,
-        };
+    state = {
+        user: null,
+    };
 
-        this.responseGoogle = this.responseGoogle.bind(this);
-        this.getCurrentUser = this.getCurrentUser.bind(this);
-        this.logout = this.logout.bind(this);
-    }
-
-    componentDidMount() {
+    componentDidMount = () => {
         this.getCurrentUser();
     }
 
 
-    getCurrentUser() {
+    getCurrentUser = () => {
         const {setLoggedIn} = this.props
-        axios.get('/api/current_user').then(response => {
-            if(response.data) {
+        axios.get('/api/current_user').then(({ data }) => {
+            if(data) {
                 this.setState({
-                    user: response.data.User[0]
+                    user: data.User[0]
                 });
                 setLoggedIn(true);
             } 
         });
     }
 
-    responseGoogle(response) {
+    responseGoogle = (response) => {
         const {getNewUsers} = this.props
         axios.post('/gconnect', {data: response.code}, {
             headers: {
@@ -45,7 +38,7 @@ class TopBar extends Component {
         });
     }
 
-    logout(response) {
+    logout = (response) => {
         const {setLoggedIn} = this.props
         axios.post('/gdisconnect').then(() => {
             setLoggedIn(false);

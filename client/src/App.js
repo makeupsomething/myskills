@@ -8,51 +8,37 @@ import LandingPage from './components/LandingPage';
 import UserSkillDetails from './components/UserSkillDetails';
 
 class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			user: null,
-			userSkills: [],
-			value: '',
-			skillSuggestions: [],
-			newUsers: [],
-			loggedIn: false
-		};
-
-		this.getCurrentUser = this.getCurrentUser.bind(this);
-		this.getNewUsers = this.getNewUsers.bind(this);
-		this.setLoggedIn = this.setLoggedIn.bind(this);
-	}
+	state = {
+		user: null,
+		userSkills: [],
+		value: '',
+		skillSuggestions: [],
+		newUsers: [],
+		loggedIn: false
+	};
   
-	componentDidMount() {
+	componentDidMount = () => {
 		this.getCurrentUser();
 		this.getNewUsers();
 	}
 
-  	getCurrentUser() {
-		axios.get('/api/current_user').then(response => {
-			if(response.data) {
-				this.setState({
-					user: response.data.User[0]
-				});
-				this.setState({
-					loggedIn: true
-				});
-			}
+  	getCurrentUser = () => {
+		axios.get('/api/current_user').then(({ data }) => {
+			data ? (this.setState({
+				user: data.User[0],
+				loggedIn: true
+			})) : (null);
 		});
 	}
 
-  	getNewUsers() {
-    	axios.get('/api/users/new').then(response => {
-        	if(response.data) {
-				this.setState({
-					newUsers: response.data.User
-				});
-        	}
-    	});
-  	}	
+  	getNewUsers = () => {
+    	axios.get('/api/users/new').then(({ data }) => {
+        	data ? (this.setState({
+				newUsers: data.User})) : (null);
+		});
+	}	
 
-  	setLoggedIn(loggedIn) {
+  	setLoggedIn = (loggedIn) => {
     	this.setState({
       		loggedIn
     	});

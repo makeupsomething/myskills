@@ -2,58 +2,49 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 class AddSkillForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: '',
-            skillSuggestions: [],
-        };
+    state = {
+        value: '',
+        skillSuggestions: [],
+    };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
+    handleChange = (event) => {
         this.setState({value: event.target.value});
-        if(event.target.value) {
-            this.getSkillByName(event.target.value);
-        }
+        event.target.value ? (this.getSkillByName(event.target.value)) : (null)
     }
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         const { userProfile, addASkill } = this.props;
-        if(this.state.skillSuggestions.length === 0) {
-            this.addASkillType(this.state.value);
+        const { skillSuggestions, value } = this.state;
+        if(skillSuggestions.length === 0) {
+            this.addASkillType(value);
         } else {
-            var skillToAdd = this.state.skillSuggestions.filter(skill => {
-                return skill.name === this.state.value;
-            });
+            var skillToAdd = skillSuggestions.filter(skill => skill.name === value)
             addASkill(userProfile.id, skillToAdd[0].id);
         }
-        this.setState({value: ''});
-        this.setState({skillSuggestions: []});
+        this.setState({
+            value: '', 
+            skillSuggestions: []
+        });
         event.preventDefault();
     }
 
-    addASkillType(skill_name) {
+    addASkillType = (skill_name) => {
         const { userProfile, addASkill } = this.props;
-        var bodyFormData = new FormData();
+        let bodyFormData = new FormData();
         bodyFormData.set('skill_name', skill_name);
         axios({
             method: 'post',
             url: `/api/skills`,
             data: bodyFormData,
             config: { headers: {'Content-Type': 'multipart/form-data' }}
-        }).then(response => {
-            if(response.data) {
-                addASkill(userProfile.id, response.data.SkillType[0].id);
-            }
+        }).then(({ data }) => {
+            data ? addASkill(userProfile.id, data.SkillType[0].id) : null
         });
     }
 
-    getSkillByName(skill_name) {
-        axios.get(`/api/skills/${skill_name}`).then(response => {
-            this.setState({skillSuggestions: response.data.SkillType});
+    getSkillByName = (skill_name) => {
+        axios.get(`/api/skills/${skill_name}`).then(({ data }) => {
+            this.setState({skillSuggestions: data.SkillType});
         });
     }
 
@@ -69,8 +60,8 @@ class AddSkillForm extends Component {
                                 <div className="input-field col s12">
                                     <input list="skills" id="skill" name="skill" placeholder="Skill Name" value={this.state.value} onChange={this.handleChange}/>
                                     <datalist id="skills">
-                                    {this.state.skillSuggestions.map(skill => {
-                                        return <option id={skill.id} name={skill.id} value={skill.name} key={skill.id}>{skill.name}</option>
+                                    {this.state.skillSuggestions.map(({ id, name}) => {
+                                        return <option id={id} name={id} value={name} key={id}>{name}</option>
                                     })}
                                     </datalist>
                                 </div>

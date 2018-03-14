@@ -3,39 +3,25 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 class LandingPage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            topUsers: [],
-            topSkills: []
-        };
+    state = {
+        topUsers: [],
+        topSkills: []
+    };
 
-        this.getTopUsers = this.getTopUsers.bind(this);
-        this.getTopSkills = this.getTopSkills.bind(this);
-    }
-
-    componentDidMount() {
+    componentDidMount = () => {
         this.getTopUsers();
         this.getTopSkills();
     }
 
-    getTopUsers() {
-        axios.get('/api/users/top').then(response => {
-            if(response.data) {
-                this.setState({
-                    topUsers: response.data.User
-                });
-            }
+    getTopUsers = () => {
+        axios.get('/api/users/top').then(({ data }) => {
+            data ? this.setState({topUsers: data.User}) : null
         });
     }
 
-    getTopSkills() {
-        axios.get('/api/skills/top').then(response => {
-            if(response.data) {
-                this.setState({
-                    topSkills: response.data.SkillType
-                });
-            }
+    getTopSkills = () => {
+        axios.get('/api/skills/top').then(({ data }) => {
+            data ? this.setState({topSkills: data.SkillType}) : null
         });
     }
 
@@ -48,21 +34,21 @@ class LandingPage extends Component {
             <h3>New Users</h3>
             <div className="container">
                 <div className="row">
-                    {newUsers ? newUsers.map(user => {
-                        return <div className="col s6 m4" key={user.id}>
+                    {newUsers ? newUsers.map(({ id, name, picture, email, time_created}) => {
+                        return <div className="col s6 m4" key={id}>
                                 <div className="card blue-grey darken-1">
                                     <div className="card-image">
-                                        <img src={user.picture} alt={`${user.name}'s profile pic`} />
+                                        <img src={picture} alt={`${name}'s profile pic`} />
                                     </div>
-                                    <p className="card-title blue-grey-text text-lighten-5">{user.name}</p>
+                                    <p className="card-title blue-grey-text text-lighten-5">{name}</p>
                                     {loggedIn ? (<div className="card-content blue-grey-text text-lighten-5">
-                                        <label>Email: </label><span>{user.email}</span>
+                                        <label>Email: </label><span>{email}</span>
                                         <br />
-                                        <label>Joined: </label><span>{user.time_created}</span>
+                                        <label>Joined: </label><span>{time_created}</span>
                                     </div>) : (null)}
                                     <div className="card-action">
                                     {loggedIn ? (<Link 
-                                    to={`/profiles/${user.id}`} 
+                                    to={`/profiles/${id}`} 
                                     className="waves-effect waves-light btn">
                                     Profile
                                     </Link>) : (<p>Log in to view</p>)} 
@@ -73,20 +59,21 @@ class LandingPage extends Component {
                 </div>
                 <div className="row">
                 <h3>Top Users</h3>
-                    {this.state.topUsers ? this.state.topUsers.map(user => {
-                        return <div className="col s6 m4" key={user.id}>
+                    {this.state.topUsers ? this.state.topUsers.map(
+                        ({ id, name, picture, email, time_created, total_endorsement_count}) => {
+                        return <div className="col s6 m4" key={id}>
                                 <div className="card blue-grey darken-1">
                                     <div className="card-image">
-                                        <img src={user.picture} alt={`${user.name}'s profile pic`} />
+                                        <img src={picture} alt={`${name}'s profile pic`} />
                                     </div>
-                                    <p className="card-title blue-grey-text text-lighten-5">{user.name}</p>
+                                    <p className="card-title blue-grey-text text-lighten-5">{name}</p>
                                     <div className="card-content blue-grey-text text-lighten-5">
                                         <p>Total endorsements</p>
-                                        <h1>{user.total_endorsement_count}</h1>
+                                        <h1>{total_endorsement_count}</h1>
                                     </div>
                                     <div className="card-action">
                                     {loggedIn ? (<Link 
-                                    to={`/profiles/${user.id}`} 
+                                    to={`/profiles/${id}`} 
                                     className="waves-effect waves-light btn">
                                     Profile
                                     </Link>) : (<p>Log in to view</p>)}
@@ -97,12 +84,12 @@ class LandingPage extends Component {
                 </div>
                 <div className="row">
                 <h3>Top Skills</h3>
-                    {this.state.topSkills ? this.state.topSkills.map(skill => {
-                        return <div className="col s6 m4" key={skill.id}>
+                    {this.state.topSkills ? this.state.topSkills.map(({ id, name, total_endorsement_count }) => {
+                        return <div className="col s6 m4" key={id}>
                                 <div className="card blue-grey darken-1">
-                                    <p className="card-title blue-grey-text text-lighten-5">{skill.name}</p>
+                                    <p className="card-title blue-grey-text text-lighten-5">{name}</p>
                                     <div className="card-content blue-grey-text text-lighten-5">
-                                        <h1>{skill.total_endorsement_count}</h1>
+                                        <h1>{total_endorsement_count}</h1>
                                     </div>
                                 </div>
                             </div>

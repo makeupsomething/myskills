@@ -3,43 +3,37 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 class Skill extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          can_endorse: true,
-        };
+    state = {
+        can_endorse: true,
+      };
 
-        this.endorseSkill = this.endorseSkill.bind(this);
-        this.getEndorsements = this.getEndorsements.bind(this);
-    }
-
-    componentDidMount() {
+    componentDidMount = () => {
         this.getEndorsements();
     }
 
-    endorseSkill(for_user_id, by_user_id, skill_id) {
+    endorseSkill = (for_user_id, by_user_id, skill_id) => {
         const { getUserSkills } = this.props;
-        var bodyFormData = new FormData();
+        const bodyFormData = new FormData();
         bodyFormData.set('by_user_id', by_user_id);
         axios({
             method: 'post',
             url: `/api/users/${for_user_id}/skills/${skill_id}/endorsements`,
             data: bodyFormData,
             config: { headers: {'Content-Type': 'multipart/form-data' }}
-        }).then(response => {
-            this.checkCanEndorse(response.data.Endorsement);
+        }).then(({ data }) => {
+            this.checkCanEndorse(data.Endorsement);
             getUserSkills(for_user_id);
         });
     }
 
-    getEndorsements() {
+    getEndorsements = () => {
         const { skill, userProfile } = this.props;
-        axios.get(`/api/users/${userProfile.id}/skills/${skill.skill_id}/endorsements`).then(response => {
-            this.checkCanEndorse(response.data.Endorsement);
+        axios.get(`/api/users/${userProfile.id}/skills/${skill.skill_id}/endorsements`).then(({ data }) => {
+            this.checkCanEndorse(data.Endorsement);
         });
     }
 
-    checkCanEndorse(endorsementList) {
+    checkCanEndorse = (endorsementList) => {
         const { currentUser } = this.props;
         const result = endorsementList.find( endorsement => endorsement.endorsed_by_id === currentUser.id );
         this.setState({can_endorse: result});
